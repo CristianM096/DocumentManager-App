@@ -1,4 +1,4 @@
-package com.sophos.documentmanager.ui.login.ui
+package com.sophos.documentmanager.ui.view.login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -16,6 +16,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sophos.documentmanager.R
+import com.sophos.documentmanager.ui.viewmodel.LoginViewModel
 import kotlinx.coroutines.launch
 
 @Composable

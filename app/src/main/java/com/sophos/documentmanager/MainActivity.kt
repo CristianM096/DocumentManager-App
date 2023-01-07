@@ -6,15 +6,22 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.sophos.documentmanager.ui.login.ui.LoginScreen
-import com.sophos.documentmanager.ui.login.ui.LoginViewModel
+import com.sophos.documentmanager.data.repository.UserRepository
+import com.sophos.documentmanager.domain.LoginUseCase
+import com.sophos.documentmanager.ui.view.login.LoginScreen
+import com.sophos.documentmanager.ui.viewmodel.LoginViewModel
 import com.sophos.documentmanager.ui.theme.DocumentManagerTheme
+import com.sophos.documentmanager.ui.view.login.HomeScreen
+import com.sophos.documentmanager.ui.viewmodel.HomeViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @Inject
+    lateinit var loginUseCase: LoginUseCase
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -24,7 +31,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    LoginScreen(LoginViewModel())
+                    HomeScreen(viewModel = HomeViewModel(loginUseCase))
                 }
             }
         }
