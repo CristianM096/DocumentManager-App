@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    HomeScreen(viewModel = HomeViewModel(loginUseCase))
+                    LoginScreen(viewModel = LoginViewModel())
                 }
             }
         }
