@@ -30,6 +30,8 @@ import com.sophos.documentmanager.ui.viewmodel.LoginViewModel
 import com.sophos.documentmanager.ui.theme.DocumentManagerTheme
 import com.sophos.documentmanager.ui.theme.SophosLight
 import com.sophos.documentmanager.ui.theme.SophosLightDisable
+import com.sophos.documentmanager.ui.view.login.HomeScreen
+import com.sophos.documentmanager.ui.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -53,8 +55,10 @@ class MainActivity : AppCompatActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    LoginScreen(viewModel = LoginViewModel(loginUseCase,this,fragment))
+//                    LoginScreen(viewModel = LoginViewModel(loginUseCase,this,fragment))
+                    HomeScreen(viewModel = HomeViewModel())
                 }
+                
             }
         }
         setupAuth()

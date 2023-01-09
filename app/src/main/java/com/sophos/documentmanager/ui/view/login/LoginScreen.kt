@@ -65,7 +65,7 @@ fun Login(modifier: Modifier,viewModel: LoginViewModel){
     }else {
         LazyColumn(modifier = modifier) {
             item {
-                HeaderImage(Modifier)
+                HeaderImageSophos(Modifier)
                 Spacer(modifier = Modifier.padding(16.dp))
                 TitleText(Modifier.fillMaxWidth())
                 Spacer(modifier = Modifier.padding(16.dp))
@@ -99,7 +99,7 @@ fun Login(modifier: Modifier,viewModel: LoginViewModel){
 }
 
 @Composable
-fun HeaderImage(modifier: Modifier){
+fun HeaderImageSophos(modifier: Modifier){
     Image(painter = painterResource(id = R.drawable.sophos_solutions),
         contentDescription = "Header",
         modifier = modifier.fillMaxWidth(),
