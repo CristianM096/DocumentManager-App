@@ -1,5 +1,8 @@
 package com.sophos.documentmanager.di
 
+import androidx.fragment.app.Fragment
+import com.sophos.documentmanager.data.network.FragmentService
+import com.sophos.documentmanager.data.network.FragmentService_Factory
 import com.sophos.documentmanager.data.network.UserApiClient
 import com.sophos.documentmanager.domain.LoginUseCase
 import dagger.Module
@@ -22,15 +25,11 @@ object NetworkModule {
             .build()
     }
 
-//    @Singleton
-//    @Provides
-//    fun provideQuoteApiClient(retrofit: Retrofit):QuoteApiClient{
-//        return retrofit.create(QuoteApiClient::class.java)
-//    }
     @Singleton
     @Provides
     fun provideUserApiClient(retrofit: Retrofit):UserApiClient{
         return retrofit.create(UserApiClient::class.java)
     }
+
 
 }

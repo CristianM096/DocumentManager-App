@@ -25,7 +25,6 @@ class HomeViewModel @Inject constructor(
             val result = loginUseCase(email,password)
             if (result != null) {
                 if (result.access){
-                    println(result)
                     _email.value = result.name
                     _password.value = result.surname
                 }
