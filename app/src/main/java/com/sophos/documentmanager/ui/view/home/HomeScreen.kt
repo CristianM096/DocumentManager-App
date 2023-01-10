@@ -43,7 +43,16 @@ fun Home(navController:NavController, viewModel: HomeViewModel){
     val auth:String by viewModel.auth.observeAsState(initial = "")
     Scaffold(
         content = { content(Modifier.background(Color.White),navController) },
-        topBar = { topBar(navController, "Home", leftElement = { Text(text = viewModel.user.name)}, auth = auth) }
+        topBar = {
+            topBar(navController,
+            leftElement = { Text(
+                text = viewModel.user.name,
+                color = SophosLight,
+                fontSize = 30.sp,
+                fontWeight = FontWeight.Bold
+            )},
+            auth = auth)
+        }
     )
 }
 

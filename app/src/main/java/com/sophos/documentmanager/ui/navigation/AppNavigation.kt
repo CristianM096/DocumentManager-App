@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.sophos.documentmanager.ui.view.document.CopyScren
 import com.sophos.documentmanager.ui.view.document.DocumentCreateScreen
 import com.sophos.documentmanager.ui.view.document.DocumentShowScreen
 import com.sophos.documentmanager.ui.view.login.HomeScreen
@@ -25,7 +26,12 @@ fun AppNavigation(
     officeShowViewModel: OfficeShowViewModel
 ){
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Destinations.Login.route){
+    NavHost(navController = navController, startDestination = Destinations.Copy.route){
+        composable(route = Destinations.Copy.route){
+            //"+{text}",arguments = listOf(navArgument(name="text") { type = NavType.StringType}
+            CopyScren(navController = navController )
+            //,it.arguments?.getString("text"))
+        }
         composable(route = Destinations.Login.route){
             //"+{text}",arguments = listOf(navArgument(name="text") { type = NavType.StringType}
             LoginScreen(navController,loginViewModel)

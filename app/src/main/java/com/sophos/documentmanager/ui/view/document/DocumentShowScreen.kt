@@ -36,7 +36,11 @@ fun DocumentShow(navController: NavController, viewModel: DocumentShowViewModel)
     val auth:String by viewModel.auth.observeAsState(initial = "")
     Scaffold(
         content = { contentDocumentShow(viewModel) },
-        topBar = { topBar(navController, "Document Show" ,{}, auth = auth) }
+        topBar = { topBar(navController,
+            {
+
+            },
+            auth = auth) }
     )
 }
 @Composable

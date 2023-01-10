@@ -22,7 +22,11 @@ fun DocumentCreate(navController:NavController,viewModel: DocumentCreateViewMode
 
     Scaffold(
         content = { contentDocumentCreate(viewModel) },
-        topBar = { topBar(navController, "Document Create", {}, auth = auth) }
+        topBar = { topBar(navController,
+            {
+
+            },
+            auth = auth) }
     )
 }
 @Composable

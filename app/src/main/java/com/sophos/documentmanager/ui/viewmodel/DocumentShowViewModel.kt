@@ -20,5 +20,6 @@ class DocumentShowViewModel @Inject constructor(): ViewModel(){
         user = Gson().fromJson(authenticate, UserModel::class.java)
         _auth.value = authenticate?:""
         created = true
+
     }
 }

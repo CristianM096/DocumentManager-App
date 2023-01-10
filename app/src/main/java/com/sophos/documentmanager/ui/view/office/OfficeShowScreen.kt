@@ -35,7 +35,11 @@ fun OfficeShow(navController: NavController, viewModel: OfficeShowViewModel){
     val auth:String by viewModel.auth.observeAsState(initial = "")
     Scaffold(
         content = { contentOfficeShow(viewModel) },
-        topBar = { topBar(navController,"Office",{}, auth = auth) }
+        topBar = { topBar(navController,
+            {
+
+            },
+            auth = auth) }
     )
 }
 @Composable

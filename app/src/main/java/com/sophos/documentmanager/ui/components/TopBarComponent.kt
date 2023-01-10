@@ -16,7 +16,7 @@ import androidx.navigation.NavController
 import com.sophos.documentmanager.ui.theme.SophosLight
 
 @Composable
-fun topBar(navController: NavController, text:String, leftElement:@Composable() ()->Unit, auth: String) {
+fun topBar(navController: NavController, leftElement:@Composable() ()->Unit, auth: String) {
     TopAppBar(
         backgroundColor = Color.White,
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
@@ -26,12 +26,6 @@ fun topBar(navController: NavController, text:String, leftElement:@Composable() 
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(
-                    text = text,
-                    color = SophosLight,
-                    fontSize = 30.sp,
-                    fontWeight = FontWeight.Bold
-                )
                 leftElement()
                 HamburgerMenu(navController = navController, auth = auth)
             }

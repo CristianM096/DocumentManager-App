@@ -8,4 +8,5 @@ sealed class Destinations(
     object DocumentShow:Destinations("DocumentShow")
     object DocumentCreate:Destinations("DocumentCreate")
     object OfficeShow:Destinations("OfficeShow")
+    object Copy:Destinations("Copy")
 }
