@@ -1,9 +1,6 @@
 package com.sophos.documentmanager.ui.view.office
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
@@ -16,6 +13,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.google.maps.android.compose.GoogleMap
 import com.sophos.documentmanager.ui.components.topBar
 import com.sophos.documentmanager.ui.theme.SophosLight
 import com.sophos.documentmanager.ui.view.login.HamburgerMenu
@@ -42,5 +40,6 @@ fun OfficeShow(navController: NavController, viewModel: OfficeShowViewModel){
 }
 @Composable
 fun contentOfficeShow(viewModel: OfficeShowViewModel){
-    Text(text = viewModel.auth.value?:"" + "Office")
+    val marker
+    GoogleMap(modifier = Modifier.fillMaxSize())
 }

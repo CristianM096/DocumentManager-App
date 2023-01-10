@@ -16,6 +16,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DocumentManager"
         tools:targetApi="31">
+        <meta-data
+            android:name = "com.google.android.geo.API_KEY"
+            android:value = "AIzaSyBt0wSRhMPQN0m4XAmP5KuU9-38WoBbt_8"
+        />
         <activity
             android:name=".MainActivity"
             android:exported="true"
