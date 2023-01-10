@@ -8,5 +8,4 @@ import retrofit2.http.Query
 interface UserApiClient {
     @GET("RS_Usuarios")
     suspend fun getLoginUser(@Query("idUsuario") email:String, @Query("clave") password:String):Response<UserModel>
-
 }

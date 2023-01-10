@@ -36,9 +36,7 @@ fun OfficeShow(navController: NavController, viewModel: OfficeShowViewModel){
     Scaffold(
         content = { contentOfficeShow(viewModel) },
         topBar = { topBar(navController,
-            {
-
-            },
+            { navController },
             auth = auth) }
     )
 }

@@ -21,7 +21,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
-import com.sophos.documentmanager.data.network.FragmentService
 import com.sophos.documentmanager.ui.navigation.AppNavigation
 import com.sophos.documentmanager.ui.theme.SophosLight
 import com.sophos.documentmanager.ui.theme.SophosLightDisable
@@ -37,11 +36,8 @@ class MainActivity @Inject constructor() : AppCompatActivity() {
     private val documentShowViewModel: DocumentShowViewModel by viewModels()
     private val documentCreateViewModel: DocumentCreateViewModel by viewModels()
     private val officeShowViewModel: OfficeShowViewModel by viewModels()
+    private val imageShowViewModel : ImageShowViewModel by viewModels()
 
-
-
-    @Inject
-    lateinit var fragment: FragmentService
     private var canAuthenticate = false
     private lateinit var promptInfo: BiometricPrompt.PromptInfo
 
@@ -56,10 +52,16 @@ class MainActivity @Inject constructor() : AppCompatActivity() {
                 homeViewModel = homeViewModel,
                 documentCreateViewModel = documentCreateViewModel,
                 documentShowViewModel = documentShowViewModel,
-                officeShowViewModel = officeShowViewModel
+                officeShowViewModel = officeShowViewModel,
+                imageShowViewModel = imageShowViewModel
             )
         }
 //        setupAuth()
+    }
+
+    @Composable
+    fun huella(){
+        authenticate {  }
     }
 
     private fun setupAuth() {

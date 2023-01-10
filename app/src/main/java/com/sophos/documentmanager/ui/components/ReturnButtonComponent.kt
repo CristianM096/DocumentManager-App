@@ -12,6 +12,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.sophos.documentmanager.ui.theme.SophosLight
 import com.sophos.documentmanager.ui.theme.SophosLightDisable
 
@@ -22,9 +23,9 @@ fun preview(){
 }
 
 @Composable
-fun ReturnButton(){
+fun ReturnButton(navController: NavController){
     TextButton(
-        onClick = { /*TODO*/ },
+        onClick = { navController.popBackStack() },
         colors = ButtonDefaults.buttonColors(
             backgroundColor = Color.Transparent,
             disabledBackgroundColor = Color.Transparent,

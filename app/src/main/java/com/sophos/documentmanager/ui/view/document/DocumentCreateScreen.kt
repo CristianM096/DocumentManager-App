@@ -23,9 +23,7 @@ fun DocumentCreate(navController:NavController,viewModel: DocumentCreateViewMode
     Scaffold(
         content = { contentDocumentCreate(viewModel) },
         topBar = { topBar(navController,
-            {
-
-            },
+            { navController },
             auth = auth) }
     )
 }

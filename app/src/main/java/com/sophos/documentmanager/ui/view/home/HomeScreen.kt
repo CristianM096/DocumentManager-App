@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.sophos.documentmanager.R
+import com.sophos.documentmanager.ui.components.ContentOptions
 import com.sophos.documentmanager.ui.components.topBar
 import com.sophos.documentmanager.ui.navigation.Destinations
 import com.sophos.documentmanager.ui.theme.*
@@ -42,7 +43,7 @@ fun HomeScreen(navController: NavController,viewModel: HomeViewModel, auth:Strin
 fun Home(navController:NavController, viewModel: HomeViewModel){
     val auth:String by viewModel.auth.observeAsState(initial = "")
     Scaffold(
-        content = { content(Modifier.background(Color.White),navController) },
+        content = { content(Modifier.background(Color.White), viewModel = HomeViewModel(),navController) },
         topBar = {
             topBar(navController,
             leftElement = { Text(
@@ -57,8 +58,8 @@ fun Home(navController:NavController, viewModel: HomeViewModel){
 }
 
 @Composable
-fun content(modifier: Modifier, navController: NavController) {
-    ContentBody(modifier = modifier)
+fun content(modifier: Modifier,viewModel: HomeViewModel, navController: NavController) {
+    ContentBody(modifier = modifier, viewModel,navController)
     ContentImageCorporative(modifier = modifier.fillMaxWidth())
     ContentTextImage(modifier = modifier)
 }
@@ -183,72 +184,22 @@ fun ContentTextImage(modifier: Modifier){
     
 }
 @Composable
-fun ContentBody(modifier: Modifier) {
+fun ContentBody(modifier: Modifier, viewModel: HomeViewModel,navController: NavController) {
     LazyColumn(modifier = modifier
         .padding(20.dp, 30.dp)
         .fillMaxSize()) {
         item{
             Spacer(modifier = Modifier.padding(140.dp))
             ContentOptions("Enviar Documentos", ImageVector.vectorResource(R.drawable.send_doc),
-                SendDocsColorLight, {/*TODO: Agregar funcion para ir a Enviar documentos*/ })
+                SendDocsColorLight, { navController.navigate(route = Destinations.DocumentCreate.route + "/" + viewModel.auth) })
             Spacer(modifier = Modifier.padding(10.dp))
             ContentOptions("Ver Documentos", ImageVector.vectorResource(R.drawable.show_docs),
-                ShowDocsColorLight, {/*TODO: Agregar funcion para ir a Ver documentos*/ })
+                ShowDocsColorLight, {navController.navigate(route = Destinations.DocumentShow.route + "/" + viewModel.auth)})
             Spacer(modifier = Modifier.padding(10.dp))
             ContentOptions("Oficinas", ImageVector.vectorResource(R.drawable.office),
-                MapColorLight, {/*TODO: Agregar funcion para ir a Oficinas*/ })
+                MapColorLight, {navController.navigate(route = Destinations.OfficeShow.route + "/" + viewModel.auth) })
             Spacer(modifier = Modifier.padding(10.dp))
         }
 
-    }
-}
-
-@Composable
-fun ContentOptions(
-    textOption: String,
-    imageVector: ImageVector,
-    color: Color,
-    entryFunction: () -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .border(
-                width = 2.dp,
-                color = color,
-                shape = RoundedCornerShape(16.dp)
-            )
-            .padding(horizontal = 10.dp, vertical = 15.dp)
-    ) {
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .align(Alignment.Start)
-        ) {
-            Icon(
-                imageVector = imageVector,
-                contentDescription = textOption,
-                tint = color,
-                modifier = Modifier.padding(horizontal = 4.dp)
-            )
-            Text(text = textOption, fontSize = 18.sp, fontWeight = FontWeight.Bold, color = color)
-        }
-        Button(
-            onClick = { entryFunction() },
-
-            shape = RoundedCornerShape(16.dp),
-            border = BorderStroke(1.dp, color),
-            modifier = Modifier
-                .align(Alignment.End)
-                .size(height = 40.dp, width = 150.dp),
-            colors = ButtonDefaults.buttonColors(
-                backgroundColor = Color.White,
-                disabledBackgroundColor = Color.White,
-                contentColor = color,
-                disabledContentColor = SophosLightDisable,
-            )
-        ) {
-            Text(text = "Ingresar", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = color)
-            Icon(Icons.Default.ArrowForward, contentDescription = "Flecha para ingresar")
-        }
     }
 }
