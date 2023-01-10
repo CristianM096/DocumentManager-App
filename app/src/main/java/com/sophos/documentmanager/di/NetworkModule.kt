@@ -4,6 +4,8 @@ import androidx.fragment.app.Fragment
 import com.sophos.documentmanager.data.network.FragmentService
 import com.sophos.documentmanager.data.network.FragmentService_Factory
 import com.sophos.documentmanager.data.network.UserApiClient
+import com.sophos.documentmanager.data.network.UserService
+import com.sophos.documentmanager.data.repository.UserRepository
 import com.sophos.documentmanager.domain.LoginUseCase
 import dagger.Module
 import dagger.Provides
@@ -30,6 +32,18 @@ object NetworkModule {
     fun provideUserApiClient(retrofit: Retrofit):UserApiClient{
         return retrofit.create(UserApiClient::class.java)
     }
+
+//    @Singleton
+//    @Provides
+//    fun provideLoginUseCase():LoginUseCase{
+//        return Builder.create(LoginUseCase::class.java)
+//    }
+//
+//    @Singleton
+//    @Provides
+//    fun provideUserRepository():UserRepository{
+//        return UserRepository()
+//    }
 
 
 }

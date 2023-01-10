@@ -1,6 +1,5 @@
 package com.sophos.documentmanager.ui.view.login
 
-import android.icu.text.ListFormatter.Width
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -11,9 +10,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,117 +20,123 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.sophos.documentmanager.R
+import com.sophos.documentmanager.ui.components.topBar
+import com.sophos.documentmanager.ui.navigation.Destinations
 import com.sophos.documentmanager.ui.theme.*
 import com.sophos.documentmanager.ui.viewmodel.HomeViewModel
 
 @Composable
-fun HomeScreen(viewModel: HomeViewModel) {
+fun HomeScreen(navController: NavController,viewModel: HomeViewModel, auth:String?) {
+
+    if(!viewModel.created){
+        viewModel.onCreate(auth)
+    }
+    Home(navController = navController, viewModel = viewModel)
+
+}
+@Composable
+fun Home(navController:NavController, viewModel: HomeViewModel){
+    val auth:String by viewModel.auth.observeAsState(initial = "")
     Scaffold(
-        content = { content(Modifier.background(Color.White)) },
-        topBar = { topBar() }
+        content = { content(Modifier.background(Color.White),navController) },
+        topBar = { topBar(navController, "Home", leftElement = { Text(text = viewModel.user.name)}, auth = auth) }
     )
 }
 
 @Composable
-fun content(modifier: Modifier) {
+fun content(modifier: Modifier, navController: NavController) {
     ContentBody(modifier = modifier)
     ContentImageCorporative(modifier = modifier.fillMaxWidth())
     ContentTextImage(modifier = modifier)
 }
 
-@Composable
-fun topBar() {
-    val options = listOf( // (2)
-        "Cambiar nombre",
-        "Enviar por email",
-        "Copiar enlace",
-        "Ocultar subtareas completas",
-        "Eliminar"
-    )
-    var showMenu: Boolean by remember { mutableStateOf(false) }
-    TopAppBar(
 
-        backgroundColor = Color.White,
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
-        modifier = Modifier.fillMaxWidth(),
-        content = {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+
+@Composable
+fun HamburgerMenu(navController: NavController){
+    var showMenu: Boolean by remember { mutableStateOf(false) }
+    IconButton(
+        onClick = { showMenu = true }
+    ) {
+        Icon(
+            imageVector = ImageVector.vectorResource(R.drawable.menu2),
+            contentDescription = "Menu",
+            tint = SophosLight
+        )
+        DropdownMenu(
+            expanded = showMenu, onDismissRequest = { showMenu = false },
+        ) {
+            DropdownMenuItem(
+                onClick = {
+                    showMenu = false
+                    navController.navigate(route = Destinations.DocumentCreate.route)},
+
+                ) {
+                Text(
+                    text = "Enviar documentos", color = SophosLight,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            DropdownMenuItem(
+                onClick = {
+                    showMenu = false
+                    navController.navigate(route = Destinations.DocumentShow.route)}
             ) {
                 Text(
-                    text = "Cristian",
-                    color = SophosLight,
-                    fontSize = 30.sp,
-                    fontWeight = FontWeight.Bold
+                    text = "Ver documentos", color = SophosLight,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
                 )
-                IconButton(
-                    onClick = { showMenu = true }
+            }
+            DropdownMenuItem(
+                onClick = {
+                    showMenu = false
+                    navController.navigate(route = Destinations.OfficeShow.route)}
+            ) {
+                Text(
+                    text = "Oficinas", color = SophosLight,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            DropdownMenuItem(
+                onClick = {
+                    showMenu = false/*TODO: Cambio de Color*/ }
+            ) {
+                Text(
+                    text = "Modo nocturno", color = SophosLight,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            DropdownMenuItem(
+                onClick = { showMenu = false/*TODO: Cambio de Idioma*/ }
+            ) {
+                Text(
+                    text = "Idioma Inglés", color = SophosLight,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            DropdownMenuItem(
+                onClick = {
+                    navController.navigate(route = Destinations.Login.route)
+                    showMenu = false },
+
                 ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.menu2),
-                        contentDescription = "Menu",
-                        tint = SophosLight
-                    )
-                    DropdownMenu(
-                        expanded = showMenu, onDismissRequest = { showMenu = false },
-                    ) {
-                        DropdownMenuItem(
-                            onClick = { showMenu = false/*TODO: Cambio de Screen*/ },
-
-                            ) {
-                            Text(
-                                text = "Enviar documentos", color = SophosLight,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
-                        DropdownMenuItem(
-                            onClick = { showMenu = false/*TODO: Cambio de Screen*/ }
-                        ) {
-                            Text(
-                                text = "Ver documentos", color = SophosLight,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
-                        DropdownMenuItem(
-                            onClick = { showMenu = false/*TODO: Cambio de Screen*/ }
-                        ) {
-                            Text(
-                                text = "Oficinas", color = SophosLight,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
-                        DropdownMenuItem(
-                            onClick = { showMenu = false/*TODO: Cambio de Color*/ }
-                        ) {
-                            Text(
-                                text = "Modo nocturno", color = SophosLight,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
-                        DropdownMenuItem(
-                            onClick = { showMenu = false/*TODO: Cambio de Idioma*/ }
-                        ) {
-                            Text(
-                                text = "Idioma Inglés", color = SophosLight,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
-                    }
-                }
-
+                Text(
+                    text = "Cerrar Sesion", color = SophosLight,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
         }
-    )
+    }
 }
 
 @Composable
@@ -173,7 +177,6 @@ fun ContentTextImage(modifier: Modifier){
 fun ContentBody(modifier: Modifier) {
     LazyColumn(modifier = modifier
         .padding(20.dp, 30.dp)
-        .background(Color.Black)
         .fillMaxSize()) {
         item{
             Spacer(modifier = Modifier.padding(140.dp))

@@ -26,27 +26,32 @@ import androidx.compose.ui.text.style.TextAlign
 
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.sophos.documentmanager.R
+import com.sophos.documentmanager.ui.navigation.Destinations
 import com.sophos.documentmanager.ui.theme.SophosLight
 import com.sophos.documentmanager.ui.theme.SophosLightDisable
 import com.sophos.documentmanager.ui.viewmodel.LoginViewModel
 import kotlinx.coroutines.launch
 
 
-
-
 @Composable
-fun LoginScreen(viewModel: LoginViewModel){
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp)){
-        Login(Modifier.align(Alignment.Center),viewModel)
+fun LoginScreen(navController: NavController, viewModel: LoginViewModel){//viewModel: LoginViewModel) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Login(Modifier.align(Alignment.Center), viewModel, navController)
     }
-    viewModel.setupAuth()
 }
 
 @Composable
-fun Login(modifier: Modifier,viewModel: LoginViewModel){
+fun Login(
+    modifier: Modifier,
+    viewModel: LoginViewModel,
+    navController: NavController
+) {
     val email: String by viewModel.email.observeAsState(initial = "")
     val password: String by viewModel.password.observeAsState(initial = "")
     val loginEnable: Boolean by viewModel.loginEnable.observeAsState(initial = false)
@@ -56,13 +61,14 @@ fun Login(modifier: Modifier,viewModel: LoginViewModel){
     val showDialog by viewModel.showDialog.observeAsState(initial = false)
     val titleDialog by viewModel.titleDialog.observeAsState(initial = "")
     val textDialog by viewModel.textDialog.observeAsState(initial = "")
-    val auth by viewModel.auth.observeAsState(initial = false)
+    val authenticated by viewModel.authenticated.observeAsState(initial = false)
+    val auth :String by viewModel.auth.observeAsState(initial = "")
 
-    if(isLoading){
-        Box(Modifier.fillMaxSize()){
+    if (isLoading) {
+        Box(Modifier.fillMaxSize()) {
             CircularProgressIndicator(Modifier.align(Alignment.Center))
         }
-    }else {
+    } else {
         LazyColumn(modifier = modifier) {
             item {
                 HeaderImageSophos(Modifier)
@@ -71,7 +77,10 @@ fun Login(modifier: Modifier,viewModel: LoginViewModel){
                 Spacer(modifier = Modifier.padding(16.dp))
                 EmailField(email) { viewModel.onLoginChanged(it, password) }
                 Spacer(modifier = Modifier.padding(16.dp))
-                PasswordField(password,passwordVisibility, { viewModel.onLoginChanged(email, it) }){
+                PasswordField(
+                    password,
+                    passwordVisibility,
+                    { viewModel.onLoginChanged(email, it) }) {
                     coroutineScope.launch {
                         viewModel.changePasswordVisibility()
                     }
@@ -80,27 +89,33 @@ fun Login(modifier: Modifier,viewModel: LoginViewModel){
                 LoginButton(loginEnable) {
                     coroutineScope.launch {
                         viewModel.onLoginSelected()
+                        if(authenticated){
+                            navController.popBackStack()
+                            navController.navigate(route = Destinations.Home.route + "/" + auth)
+                        }
                     }
                 }
                 Spacer(modifier = Modifier.padding(16.dp))
-                FingerPrintLoginButton(){
+                FingerPrintLoginButton() {
                     coroutineScope.launch {
 
                     }
                 }
-                DialogError(showDialog = showDialog,titleDialog,textDialog,{},
+                DialogError(showDialog = showDialog, titleDialog, textDialog, {},
                     {
                         coroutineScope.launch {
                             viewModel.changeShowDialog(false)
-                }})
+                        }
+                    })
             }
         }
     }
 }
 
 @Composable
-fun HeaderImageSophos(modifier: Modifier){
-    Image(painter = painterResource(id = R.drawable.sophos_solutions),
+fun HeaderImageSophos(modifier: Modifier) {
+    Image(
+        painter = painterResource(id = R.drawable.sophos_solutions),
         contentDescription = "Header",
         modifier = modifier.fillMaxWidth(),
     )
@@ -108,18 +123,19 @@ fun HeaderImageSophos(modifier: Modifier){
 
 @Composable
 fun TitleText(modifier: Modifier) {
-    Text(text = "Ingresa tus datos para \nacceder",
+    Text(
+        text = "Ingresa tus datos para \nacceder",
         fontSize = 20.sp,
         fontWeight = FontWeight.Bold,
         color = SophosLight,
         modifier = modifier,
         textAlign = TextAlign.Center,
 
-    )
+        )
 }
 
 @Composable
-fun EmailField(email: String, onTextFieldChanged:(String)  -> Unit) {
+fun EmailField(email: String, onTextFieldChanged: (String) -> Unit) {
 
     OutlinedTextField(
         value = email, onValueChange = { onTextFieldChanged(it) },
@@ -136,17 +152,26 @@ fun EmailField(email: String, onTextFieldChanged:(String)  -> Unit) {
         ),
         shape = RoundedCornerShape(12.dp),
         leadingIcon = {
-            Icon(imageVector = Icons.Rounded.AccountCircle, contentDescription = "User", tint = SophosLight)
+            Icon(
+                imageVector = Icons.Rounded.AccountCircle,
+                contentDescription = "User",
+                tint = SophosLight
+            )
         },
 
-    )
+        )
 }
 
 @Composable
-fun PasswordField(password: String,passwordVisibility:Boolean, onTextFieldChanged:(String)  -> Unit, changePasswordVisibility:() -> Unit) {
+fun PasswordField(
+    password: String,
+    passwordVisibility: Boolean,
+    onTextFieldChanged: (String) -> Unit,
+    changePasswordVisibility: () -> Unit
+) {
     OutlinedTextField(
-        value = password, onValueChange = {onTextFieldChanged(it)},
-        placeholder = { Text(text = "Password")},
+        value = password, onValueChange = { onTextFieldChanged(it) },
+        placeholder = { Text(text = "Password") },
         modifier = Modifier.fillMaxWidth(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         singleLine = true,
@@ -159,14 +184,18 @@ fun PasswordField(password: String,passwordVisibility:Boolean, onTextFieldChange
         ),
         shape = RoundedCornerShape(12.dp),
         leadingIcon = {
-            Icon(imageVector = ImageVector.vectorResource(R.drawable.key), contentDescription = "User", tint = SophosLight)
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.key),
+                contentDescription = "User",
+                tint = SophosLight
+            )
         },
         trailingIcon = {
             IconButton(
                 onClick = { changePasswordVisibility() }
             ) {
                 Icon(
-                    imageVector = if(passwordVisibility) {
+                    imageVector = if (passwordVisibility) {
                         ImageVector.vectorResource(id = R.drawable.visibility)
                     } else {
                         ImageVector.vectorResource(id = R.drawable.visibilityoff)
@@ -175,7 +204,7 @@ fun PasswordField(password: String,passwordVisibility:Boolean, onTextFieldChange
                 )
             }
         },
-        visualTransformation = if(passwordVisibility) {
+        visualTransformation = if (passwordVisibility) {
             VisualTransformation.None
         } else {
             PasswordVisualTransformation()
@@ -191,17 +220,18 @@ fun LoginButton(loginEnable: Boolean, onLoginSelected: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .height(48.dp),
-        colors = ButtonDefaults.buttonColors(backgroundColor = SophosLight,
-        disabledBackgroundColor = SophosLightDisable,
-        contentColor = Color.White,
-        disabledContentColor = Color.White),
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = SophosLight,
+            disabledBackgroundColor = SophosLightDisable,
+            contentColor = Color.White,
+            disabledContentColor = Color.White
+        ),
         enabled = loginEnable
 
-    ){
+    ) {
         Text(text = "Login")
     }
 }
-
 
 
 @Composable
@@ -211,7 +241,7 @@ fun FingerPrintLoginButton(onLoginSelected: () -> Unit) {
         onClick = {
             onLoginSelected()
             //TODO: llamar al metodo authenticate y pasarle el valor de authenticacion obtenido
-                  },
+        },
         modifier = Modifier
             .fillMaxWidth()
             .height(48.dp),
@@ -223,15 +253,24 @@ fun FingerPrintLoginButton(onLoginSelected: () -> Unit) {
         ),
         border = BorderStroke(1.dp, SophosLight)
 
-    ){
-        Icon(imageVector = ImageVector.vectorResource(id = R.drawable.fingerprint), contentDescription = "Icon finger print login")
+    ) {
+        Icon(
+            imageVector = ImageVector.vectorResource(id = R.drawable.fingerprint),
+            contentDescription = "Icon finger print login"
+        )
         Text(text = "Ingresar con huella")
     }
 }
 
 
 @Composable
-fun DialogError(showDialog:Boolean,titleDialog:String,textDialog:String, onDismiss:()->Unit, onConfirm:()->Unit){
+fun DialogError(
+    showDialog: Boolean,
+    titleDialog: String,
+    textDialog: String,
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit
+) {
     println(showDialog)
     if (showDialog) {
         AlertDialog(onDismissRequest = { onDismiss() },

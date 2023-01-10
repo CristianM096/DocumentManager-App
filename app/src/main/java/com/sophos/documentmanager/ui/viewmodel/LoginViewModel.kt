@@ -1,36 +1,27 @@
 package com.sophos.documentmanager.ui.viewmodel
 
-import android.content.Context
-import android.util.Log
 import android.util.Patterns
-import androidx.biometric.BiometricManager
-import androidx.biometric.BiometricPrompt
-import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import com.sophos.documentmanager.domain.LoginUseCase
-import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val loginUseCase: LoginUseCase,
-    @ApplicationContext val context: Context,
-    private val fragment: Fragment
-
+    private val loginUseCase: LoginUseCase
 ) : ViewModel()  {
 
-    private val _canAuthenticate = MutableLiveData<Boolean>()
-    val canAuthenticate: LiveData<Boolean> = _canAuthenticate
+    private val _auth = MutableLiveData<String>()
+    val auth: LiveData<String> = _auth
 
-    private val _auth = MutableLiveData<Boolean>()
-    val auth: LiveData<Boolean> = _auth
-
-    private lateinit var promptInfo: BiometricPrompt.PromptInfo
+    private val _authenticated = MutableLiveData<Boolean>()
+    val authenticated: LiveData<Boolean> = _authenticated
 
     private val _email = MutableLiveData<String>()
     val email: LiveData<String> = _email
@@ -70,21 +61,26 @@ class LoginViewModel @Inject constructor(
     suspend fun onLoginSelected() {
         _isLoading.value = true
         viewModelScope.launch {
-            val result = loginUseCase(email.value ?: "", password.value ?: "")
+            //val result = loginUseCase(email.value ?: "", password.value ?: "") TODO: DESCOMENTAR Y BORRAR LA LINEA DE ABAJO
+            val result = loginUseCase(email = "cristianorb@unicauca.edu.co", password = "PIpP0553v058")
+            print(result)
             if (result != null) {
                 if (result.access) {
                     println(result)
-                    //TODO: Redirect to Home view
+                    println(Gson().toJson(result))
+                    _auth.value = Gson().toJson(result)
+                    _authenticated.value = true
                 } else {
                     _titleDialog.value = "Incorrect credentials"
                     _textDialog.value = "Email or Password incorrect"
                     changeShowDialog(true)
+                    _authenticated.value = false
                 }
             } else {
                 _titleDialog.value = "Incorrect Connection"
-                _textDialog.value =
-                    "Incorrect connection check your internet connection and try again."
+                _textDialog.value = "Incorrect connection check your internet connection and try again."
                 changeShowDialog(true)
+                _authenticated.value = false
             }
             _isLoading.value = false
         }
@@ -99,33 +95,33 @@ class LoginViewModel @Inject constructor(
     suspend fun changeShowDialog(value: Boolean) {
         _showDialog.value = value
     }
-     fun setupAuth() {
-        if (BiometricManager.from(fragment.context?:context)
-                .canAuthenticate( BiometricManager.Authenticators.BIOMETRIC_STRONG) == BiometricManager.BIOMETRIC_SUCCESS
-        ){
-            _canAuthenticate.value = true
-
-            promptInfo = BiometricPrompt.PromptInfo.Builder()
-                .setTitle("Authenticate Biometric")
-                .setSubtitle("Authenticate yourself using the biometric sensor")
-                .setNegativeButtonText("Enter your Sophos credentials")
-                .build()
-        }
-    }
-
-    suspend fun authenticate(){
-        if (canAuthenticate.value == true){
-            BiometricPrompt(fragment, ContextCompat.getMainExecutor(fragment.context?:context),
-                object : BiometricPrompt.AuthenticationCallback(){
-                    override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                        super.onAuthenticationSucceeded(result)
-                        _auth.value = true
-                    }
-                }).authenticate(promptInfo)
-        }else{
-            _auth.value = false
-        }
-    }
+//     fun setupAuth() {
+//        if (BiometricManager.from(fragment.context?:context)
+//                .canAuthenticate( BiometricManager.Authenticators.BIOMETRIC_STRONG) == BiometricManager.BIOMETRIC_SUCCESS
+//        ){
+//            _canAuthenticate.value = true
+//
+//            promptInfo = BiometricPrompt.PromptInfo.Builder()
+//                .setTitle("Authenticate Biometric")
+//                .setSubtitle("Authenticate yourself using the biometric sensor")
+//                .setNegativeButtonText("Enter your Sophos credentials")
+//                .build()
+//        }
+//    }
+//
+//    suspend fun authenticate(){
+//        if (canAuthenticate.value == true){
+//            BiometricPrompt(fragment, ContextCompat.getMainExecutor(fragment.context?:context),
+//                object : BiometricPrompt.AuthenticationCallback(){
+//                    override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+//                        super.onAuthenticationSucceeded(result)
+//                        _auth.value = true
+//                    }
+//                }).authenticate(promptInfo)
+//        }else{
+//            _auth.value = false
+//        }
+//    }
 
 
 }
