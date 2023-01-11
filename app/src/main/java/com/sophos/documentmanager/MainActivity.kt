@@ -1,8 +1,11 @@
 package com.sophos.documentmanager
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
@@ -20,7 +23,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentManager
+import com.google.android.gms.maps.CameraUpdate
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.sophos.documentmanager.ui.navigation.AppNavigation
 import com.sophos.documentmanager.ui.theme.SophosLight
 import com.sophos.documentmanager.ui.theme.SophosLightDisable
@@ -30,17 +41,21 @@ import javax.inject.Inject
 
 @ExperimentalAnimationApi
 @AndroidEntryPoint
-class MainActivity @Inject constructor() : AppCompatActivity() {
+class MainActivity @Inject constructor() : AppCompatActivity(), OnMapReadyCallback {
     private val loginViewModel: LoginViewModel by viewModels()
     private val homeViewModel: HomeViewModel by viewModels()
     private val documentShowViewModel: DocumentShowViewModel by viewModels()
     private val documentCreateViewModel: DocumentCreateViewModel by viewModels()
     private val officeShowViewModel: OfficeShowViewModel by viewModels()
-    private val imageShowViewModel : ImageShowViewModel by viewModels()
+    private val imageShowViewModel: ImageShowViewModel by viewModels()
 
     private var canAuthenticate = false
     private lateinit var promptInfo: BiometricPrompt.PromptInfo
 
+    private lateinit var map: GoogleMap
+    companion object {
+        const val REQUEST_CODE_LOCATION = 0
+    }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,10 +73,80 @@ class MainActivity @Inject constructor() : AppCompatActivity() {
         }
 //        setupAuth()
     }
+    private fun isPermissionsGranted() = ContextCompat.checkSelfPermission(
+        this,
+        Manifest.permission.ACCESS_FINE_LOCATION
+    ) == PackageManager.PERMISSION_GRANTED
+
+    private fun enableMyLocation() {
+        if (!::map.isInitialized) return
+        if (isPermissionsGranted()) {
+//            map.isMyLocationEnabled = true
+        } else {
+            requestLocationPermission()
+        }
+    }
+
+    private fun requestLocationPermission() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
+        ) {
+            Toast.makeText(this, "Ve a ajustes y acepta los permisos", Toast.LENGTH_SHORT).show()
+        } else {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                REQUEST_CODE_LOCATION
+            )
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            REQUEST_CODE_LOCATION -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                map.isMyLocationEnabled = true
+            } else {
+                Toast.makeText(
+                    this,
+                    "Para activar la localización ve a ajustes y acepta los permisos",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            else -> {}
+        }
+    }
+
+    override fun onMapReady(googleMap: GoogleMap) {
+        map = googleMap
+        createMarker()
+        enableMyLocation()
+    }
+
+    private fun createMarker() {
+        val coordinates = LatLng(6.218229100000025, -75.58021739999998)
+        val marker = MarkerOptions().position(coordinates).title("sophos medellin")
+        map.addMarker(marker)
+        map.animateCamera(
+            CameraUpdateFactory.newLatLngZoom(coordinates, 18f), 4000, null
+        )
+    }
+
+    private fun isLocationPermissionGranted() = ContextCompat.checkSelfPermission(
+        this,
+        Manifest.permission.ACCESS_FINE_LOCATION
+    ) == PackageManager.PERMISSION_GRANTED
+
 
     @Composable
-    fun huella(){
-        authenticate {  }
+    fun huella() {
+        authenticate { }
     }
 
     private fun setupAuth() {
@@ -127,119 +212,3 @@ class MainActivity @Inject constructor() : AppCompatActivity() {
 
     }
 }
-
-//@ExperimentalAnimationApi
-//fun NavGraphBuilder.addLogin(
-//    navController: NavHostController,
-//    viewModel: LoginViewModel
-//) {
-//    composable(
-//        route = Destinations.Login.route,
-//        enterTransition = { _, _ ->
-//            slideInHorizontally(
-//                initialOffsetX = { 1000 },
-//                animationSpec = tween(500)
-//            )
-//        },
-//        exitTransition = { _, _ ->
-//            slideOutHorizontally(
-//                targetOffsetX = { -1000 },
-//                animationSpec = tween(500)
-//            )
-//        },
-//        popEnterTransition = { _, _ ->
-//            slideInHorizontally(
-//                initialOffsetX = { -1000 },
-//                animationSpec = tween(500)
-//            )
-//        },
-//        popExitTransition = { _, _ ->
-//            slideOutHorizontally(
-//                targetOffsetX = { 1000 },
-//                animationSpec = tween(500)
-//            )
-//        }
-//    ) {
-//        val user = viewModel.state.value.user
-//        if (viewModel.state.value.successLogin){
-//            LaunchedEffect(key1 = Unit){
-//                navController.navigate(Destinations.Home.route + "/$user"){
-//                    popUpTo(Destinations.Login.route){
-//                        inclusive = true
-//                    }
-//                }
-//            }
-//        }else{
-//            LoginScreen(
-//                viewModel = viewModel,
-//                onNavigateToHome = { navController.navigate(Destinations.Home.route) }
-//            )
-//        }
-//    }
-//}
-//@RequiresApi(Build.VERSION_CODES.TIRAMISU)
-//@ExperimentalAnimationApi
-//fun NavGraphBuilder.addHome(
-//    navController: NavHostController,
-//    viewModel: HomeViewModel
-//){
-//    composable(
-//        route = Destinations.Home.route + "/{auth}",
-//        arguments = Destinations.Home.arguments,
-//        enterTransition = {_, _ ->
-//            slideInHorizontally (
-//                initialOffsetX = {1000},
-//                animationSpec = tween(500)
-//            )
-//        },
-//        exitTransition = {_,_ ->
-//            slideOutHorizontally (
-//                targetOffsetX = {-1000},
-//                animationSpec = tween(500)
-//            )
-//        },
-//        popEnterTransition = {_, _ ->
-//            slideInHorizontally (
-//                initialOffsetX = {-1000},
-//                animationSpec = tween(500)
-//            )
-//        },
-//        popExitTransition = {_, _ ->
-//            slideOutHorizontally (
-//                targetOffsetX = {1000},
-//                animationSpec = tween(500)
-//            )
-//        }
-//    ){ backStackEntry ->
-//        val user = backStackEntry.arguments?.getParcelable<UserModel>("auth",UserModel::class.java)
-//        //TODO: onBack = {navController.popBackStack()}
-//        HomeScreen(viewModel = viewModel, userModel = user)
-//    }
-//}
-//@ExperimentalAnimationApi
-//fun NavGraphBuilder.addDocumentCreate(
-//){
-//    composable(
-//        route=Destinations.DocumentCreate.route,
-//    ){
-//        DocumentCreateScreen()
-//    }
-//}
-//@ExperimentalAnimationApi
-//fun NavGraphBuilder.addDocumentShow(
-//){
-//    composable(
-//        route=Destinations.DocumentShow.route,
-//    ){
-//        DocumentShowScreen()
-//    }
-//}
-//@ExperimentalAnimationApi
-//fun NavGraphBuilder.addOfficeShow(
-//){
-//    composable(
-//        route=Destinations.OfficeShow.route,
-//    ){
-//        OfficeShowScreen()
-//    }
-//}

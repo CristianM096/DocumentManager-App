@@ -40,6 +40,5 @@ fun OfficeShow(navController: NavController, viewModel: OfficeShowViewModel){
 }
 @Composable
 fun contentOfficeShow(viewModel: OfficeShowViewModel){
-    val marker
     GoogleMap(modifier = Modifier.fillMaxSize())
 }

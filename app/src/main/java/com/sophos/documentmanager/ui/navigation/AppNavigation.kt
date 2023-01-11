@@ -25,7 +25,7 @@ fun AppNavigation(
     imageShowViewModel: ImageShowViewModel
 ) {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Destinations.Login.route) {
+    NavHost(navController = navController, startDestination = Destinations.Copy.route) {
         composable(route = Destinations.Copy.route) {
             //"+{text}",arguments = listOf(navArgument(name="text") { type = NavType.StringType}
             CopyScren(navController = navController)
